@@ -86,6 +86,8 @@ body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:#1a1
 .sl .x{position:absolute;top:-1px;right:-1px;width:26px;height:26px;border:none;
  border-radius:0 7px 0 10px;background:#a33;color:#fff;font-size:16px;line-height:26px;
  font-weight:700;padding:0;cursor:pointer}
+.otra{margin-top:22px;padding-top:14px;border-top:1px solid #dfe3e6;text-align:center}
+.otra a{font-size:13.5px;color:#1a1a1a}
 .oculto{display:none}
 </style>
 </head>
@@ -349,11 +351,16 @@ function pinta() {
         '<button class="bt sec" id="botra">Usar otra papeleta</button>';
 
   } else if (VISTA.que === 'enviado') {
+    /* Aquí NO va un botón de «votar con otra papeleta». Decía la verdad
+       —hace falta otro código válido y sin usar— pero le sembraba a la gente
+       la idea de ir a buscar papeletas sueltas. Queda un renglón al pie, con
+       otras palabras, para la familia que comparte un solo teléfono. */
     h = '<div class="aviso verde grande"><b>Gracias, ya votó</b>' +
         'Sus ' + TOTAL + ' votos llegaron completos.</div>' +
         '<div class="rot">LO QUE ESCOGIÓ</div>' + htmlSlots(false) +
         '<div class="chico">Los resultados se anuncian al cierre de la exposición.</div>' +
-        '<button class="bt sec" style="margin-top:16px" id="botra">Votar con otra papeleta</button>';
+        '<div class="otra"><a href="#" id="botra">¿Alguien más de su familia va a votar ' +
+        'desde este teléfono?</a></div>';
 
   } else { /* home */
     var recien = VISTA.error;  /* aquí se reusa para el aviso de recién apartado */
@@ -406,7 +413,10 @@ function conecta() {
   al('bsi', function () { aparta(VISTA.stand); });
   al('bno', function () { ve('home'); });
   al('benv', enviaVotos);
-  al('botra', otraPapeleta);
+  al('botra', function (e) {
+    if (e && e.preventDefault) e.preventDefault();
+    otraPapeleta();
+  });
   al('potra', function (e) {
     if (e && e.preventDefault) e.preventDefault();
     if (G.votos.length && !window.confirm(

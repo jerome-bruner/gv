@@ -1,6 +1,6 @@
 /* Generación Verde · guardado en el teléfono
    Sin esto, escanear un stand sin señal no abre nada. */
-var CACHE = 'gv-v3';
+var CACHE = 'gv-v4';
 var SHELL = ['./', './index.html', './manifest.webmanifest'];
 
 self.addEventListener('install', function (e) {
