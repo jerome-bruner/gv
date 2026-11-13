@@ -372,8 +372,12 @@ function pinta() {
   }
 
   c.innerHTML = h;
+  /* El cambio de papeleta vive en el pie y no en una pantalla suelta: quien
+     teclea mal su código, o quien presta el teléfono, necesita salirse desde
+     donde esté. Ya enviada, la salida la dan las pantallas de cierre. */
   pie.innerHTML = G.papeleta
-    ? 'Papeleta GV-' + esc(G.papeleta) + ' · su voto es anónimo'
+    ? 'Papeleta GV-' + esc(G.papeleta) + ' · su voto es anónimo' +
+      (G.enviado ? '' : '<br><a href="#" id="potra">¿No es su papeleta? Usar otra</a>')
     : 'Su voto es anónimo';
   conecta();
 }
@@ -403,6 +407,13 @@ function conecta() {
   al('bno', function () { ve('home'); });
   al('benv', enviaVotos);
   al('botra', otraPapeleta);
+  al('potra', function (e) {
+    if (e && e.preventDefault) e.preventDefault();
+    if (G.votos.length && !window.confirm(
+      'Va a cambiar de papeleta.\n\nSe pierden los ' + G.votos.length +
+      ' votos que lleva apartados.')) return;
+    otraPapeleta();
+  });
 
   Array.prototype.forEach.call(document.querySelectorAll('[data-quita]'), function (b) {
     b.addEventListener('click', function () {
