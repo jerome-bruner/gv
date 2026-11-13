@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#990000">
+<link rel="manifest" href="./manifest.webmanifest">
+<title>Generación Verde · Votación</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:#1a1a1a;
+ background:#eceff1;font-size:16px;line-height:1.45;min-height:100vh;display:flex;
+ justify-content:center}
+.app{width:100%;max-width:480px;background:#fff;min-height:100vh;display:flex;flex-direction:column}
+.top{background:#990000;background-image:linear-gradient(160deg,#a80707,#7c0000);color:#fff;
+ padding:14px 18px;padding-top:calc(14px + env(safe-area-inset-top))}
+.mk{font-size:19px;font-weight:700;font-style:italic;line-height:1.15}
+.sb{font-size:11.5px;letter-spacing:1.6px;opacity:.9;margin-top:2px}
+.cuerpo{flex:1;padding:16px 18px}
+.pie{border-top:1px solid #dfe3e6;padding:10px 18px;font-size:12px;color:#333;text-align:center;
+ padding-bottom:calc(10px + env(safe-area-inset-bottom))}
+.pie a{color:#8d1b2d}
+
+.aviso{border-radius:10px;padding:12px 14px;font-size:15px;line-height:1.5;margin-bottom:14px}
+.aviso b{display:block;font-size:17px;margin-bottom:3px}
+.verde{background:#eef7f1;border:1.5px solid #4f8a66}
+.ambar{background:#fff8e8;border:1.5px solid #b8860b}
+.rojo{background:#fdf0f0;border:1.5px solid #a33}
+.grande b{font-size:21px}
+.regla{border-left:5px solid #b8860b;background:#fff8e8;border-radius:0 9px 9px 0;
+ padding:11px 13px;font-size:14.5px;line-height:1.5;margin-bottom:14px}
+.regla b{display:block;margin-bottom:2px}
+
+.campo{margin-bottom:14px}
+.campo label{display:block;font-size:12.5px;letter-spacing:1px;color:#333;margin-bottom:6px}
+.inp{width:100%;border:2px solid #37474f;border-radius:9px;padding:12px 14px;font-size:26px;
+ font-family:ui-monospace,Menlo,Consolas,monospace;letter-spacing:5px;text-transform:uppercase;
+ background:#fff;color:#1a1a1a}
+.inp:focus{outline:3px solid #f3d449;border-color:#990000}
+
+.num2{border:2px solid #990000;border-radius:12px;padding:12px 13px;margin-bottom:14px;
+ background:#fffaf9}
+.num2 label{display:block;font-size:12px;letter-spacing:1.6px;color:#8d1b2d;font-weight:700;
+ margin-bottom:8px}
+.numrow{display:flex;gap:9px}
+.ninp{flex:1;min-width:0;border:2px solid #37474f;border-radius:9px;padding:8px 10px;
+ font-size:32px;font-family:ui-monospace,Menlo,Consolas,monospace;letter-spacing:4px;
+ text-align:center;background:#fff;color:#1a1a1a}
+.ninp:focus{outline:3px solid #f3d449;border-color:#990000}
+
+.bt{width:100%;border:none;border-radius:10px;background:#990000;color:#fff;font:inherit;
+ font-size:17px;font-weight:600;padding:14px;margin-bottom:9px;cursor:pointer}
+.bt.sec{background:#fff;color:#1a1a1a;border:2px solid #9aa0a6;font-weight:500}
+.bt.mini{width:auto;flex:none;padding:0 22px;margin:0;font-size:18px}
+.bt:active{transform:translateY(1px)}
+.chico{font-size:13px;color:#333;line-height:1.5;margin-top:8px}
+.rot{font-size:11.5px;letter-spacing:2.2px;color:#333;margin:16px 0 7px}
+
+.env{width:100%;border:none;border-radius:11px;font:inherit;font-size:17px;font-weight:700;
+ padding:14px;margin-top:16px;cursor:pointer;background:#1a5c33;color:#fff;line-height:1.25}
+.env small{display:block;font-size:12.5px;font-weight:400;opacity:.92;margin-top:3px}
+.env.full{font-size:19px;padding:17px;box-shadow:0 2px 0 #0e3d21}
+.env.off{background:#eceff1;color:#777;border:2px solid #cfd8dc;cursor:default}
+.env.wait{background:#607d8b}
+
+.stand{display:flex;align-items:center;gap:14px;border:2px solid #990000;border-radius:12px;
+ padding:12px 14px;margin-bottom:14px}
+.stand.gris{border-color:#9aa0a6}
+.snum{font-size:44px;font-weight:700;line-height:1;color:#990000;min-width:66px;text-align:center}
+.stand.gris .snum{color:#555}
+.sinf b{display:block;font-size:20px;line-height:1.15}
+.sinf span{font-size:14px;color:#333}
+.preg{font-size:17px;font-weight:600;margin-bottom:12px;line-height:1.4}
+
+.slots{display:flex;gap:8px}
+.sg{flex:1;min-width:0}
+.sgt{font-size:13.5px;font-weight:700;color:#8d1b2d;text-align:center;margin-bottom:5px}
+.sl{position:relative;border:1.5px dashed #9aa0a6;border-radius:8px;padding:6px 4px;
+ margin-bottom:6px;text-align:center;min-height:50px;overflow:hidden}
+.sl b{display:block;font-size:18px;line-height:1.1}
+.sl span{font-size:11px;color:#333;line-height:1.2;display:block;
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sl.ok{border:1.5px solid #4f8a66;background:#eef7f1}
+.sl.ok b{color:#2f6b47}
+.sl .x{position:absolute;top:-1px;right:-1px;width:26px;height:26px;border:none;
+ border-radius:0 7px 0 10px;background:#a33;color:#fff;font-size:16px;line-height:26px;
+ font-weight:700;padding:0;cursor:pointer}
+.oculto{display:none}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top">
+    <div class="mk">Generación Verde</div>
+    <div class="sb">COLEGIO JEROME BRUNER · SECUNDARIA</div>
+  </div>
+  <div class="cuerpo" id="cuerpo"></div>
+  <div class="pie" id="pie">Su voto es anónimo</div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════════
+   CONFIGURACIÓN · lo único que se toca aquí
+   ═══════════════════════════════════════════════════════════════════ */
+var CFG = {
+
+  /* La liga del buzón de Apps Script, la que termina en /exec.
+     ÉSTA es la que se cambia si algún día se vuelve a desplegar.
+     Los códigos impresos NO dependen de ella. */
+  API: 'PEGUE_AQUI_LA_LIGA_DEL_BUZON',
+
+  PROYECTO: 'PRY-2026-2027-003',
+
+  /* Qué stands son de cada grado. Se llenan DESPUÉS de correr
+     «★ Numerar los stands», con lo que diga el aviso. */
+  RANGOS: { '1°': [1, 12], '2°': [13, 24], '3°': [25, 34] },
+
+  POR_GRADO: 2,
+  ESPERA: 15000
+};
+
+var GRADOS = ['1°', '2°', '3°'];
+var TOTAL  = GRADOS.length * CFG.POR_GRADO;
+
+/* ═══════════════════════════════════════════════════════════════════
+   Lo que se guarda en el teléfono
+   ═══════════════════════════════════════════════════════════════════ */
+var G = {
+  papeleta: '',      /* el código, sin el GV- */
+  token: '',         /* este teléfono */
+  votos: [],         /* números de stand apartados */
+  enviado: false,
+  equipos: null      /* { "12": ["Vida Verde","1°D"] } */
+};
+
+function guarda() {
+  try {
+    localStorage.setItem('gv', JSON.stringify({
+      p: G.papeleta, t: G.token, v: G.votos, e: G.enviado, q: G.equipos
+    }));
+  } catch (x) {}
+}
+function lee() {
+  try {
+    var d = JSON.parse(localStorage.getItem('gv') || '{}');
+    G.papeleta = d.p || '';
+    G.token    = d.t || '';
+    G.votos    = d.v || [];
+    G.enviado  = !!d.e;
+    G.equipos  = d.q || null;
+  } catch (x) {}
+  if (!G.token) { G.token = nuevoToken(); guarda(); }
+}
+function nuevoToken() {
+  var a = 'abcdefghijkmnpqrstuvwxyz23456789', s = '';
+  for (var i = 0; i < 16; i++) s += a.charAt(Math.floor(Math.random() * a.length));
+  return s;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   Cuentas sobre los votos
+   ═══════════════════════════════════════════════════════════════════ */
+function gradoDe(n) {
+  for (var i = 0; i < GRADOS.length; i++) {
+    var r = CFG.RANGOS[GRADOS[i]];
+    if (n >= r[0] && n <= r[1]) return GRADOS[i];
+  }
+  return '';
+}
+function tope() {
+  var m = 0;
+  GRADOS.forEach(function (g) { if (CFG.RANGOS[g][1] > m) m = CFG.RANGOS[g][1]; });
+  return m;
+}
+function deGrado(g) {
+  return G.votos.filter(function (n) { return gradoDe(n) === g; });
+}
+function completo() { return G.votos.length >= TOTAL; }
+
+function nombreDe(n) {
+  var e = G.equipos && G.equipos[String(n)];
+  return e ? e[0] : '';
+}
+function grupoDe(n) {
+  var e = G.equipos && G.equipos[String(n)];
+  return e ? e[1] : gradoDe(n);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   El buzón · JSONP, que es lo que cruza sin pelearse con CORS
+   ═══════════════════════════════════════════════════════════════════ */
+var _n = 0;
+function api(p, ok, mal) {
+  if (!CFG.API || CFG.API.indexOf('PEGUE') === 0) { mal('sinconfig'); return; }
+  var cb = 'gvcb' + (++_n);
+  var s  = document.createElement('script');
+  var t  = setTimeout(function () { fin(); mal('tiempo'); }, CFG.ESPERA);
+
+  function fin() {
+    clearTimeout(t);
+    try { delete window[cb]; } catch (x) { window[cb] = null; }
+    if (s.parentNode) s.parentNode.removeChild(s);
+  }
+  window[cb] = function (r) { fin(); ok(r || {}); };
+  s.onerror  = function () { fin(); mal('red'); };
+
+  p.cb = cb;
+  var q = [];
+  for (var k in p) if (p.hasOwnProperty(k))
+    q.push(encodeURIComponent(k) + '=' + encodeURIComponent(p[k]));
+  s.src = CFG.API + '?' + q.join('&');
+  document.head.appendChild(s);
+}
+
+/* la lista de equipos: se pide una vez y se queda guardada */
+function traeEquipos(listo) {
+  api({ a: 'equipos', p: CFG.PROYECTO }, function (r) {
+    if (r.ok && r.equipos) { G.equipos = r.equipos; guarda(); }
+    if (listo) listo();
+  }, function () { if (listo) listo(); });
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   Pantallas
+   ═══════════════════════════════════════════════════════════════════ */
+var VISTA = { que: 'home', stand: 0, error: '' };
+function ve(que, extra) {
+  VISTA = { que: que, stand: (extra && extra.stand) || 0, error: (extra && extra.error) || '' };
+  pinta();
+}
+
+function esc(s) {
+  return String(s === null || s === undefined ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function htmlSlots(conX) {
+  return '<div class="slots">' + GRADOS.map(function (g) {
+    var v = deGrado(g), c = [];
+    for (var i = 0; i < CFG.POR_GRADO; i++) {
+      var n = v[i];
+      if (n) {
+        c.push('<div class="sl ok">' +
+          (conX ? '<button class="x" data-quita="' + n + '" aria-label="Quitar">&times;</button>' : '') +
+          '<b>' + n + '</b><span>' + esc(nombreDe(n) || grupoDe(n)) + '</span></div>');
+      } else {
+        c.push('<div class="sl"><b>&mdash;</b><span>libre</span></div>');
+      }
+    }
+    return '<div class="sg"><div class="sgt">' + g + '</div>' + c.join('') + '</div>';
+  }).join('') + '</div>';
+}
+
+function htmlTeclear(rot) {
+  return '<div class="num2"><label>' + (rot || '¿CUÁL STAND LE GUSTÓ?') + '</label>' +
+    '<div class="numrow">' +
+      '<input class="ninp" id="nst" type="text" inputmode="numeric" pattern="[0-9]*" ' +
+        'maxlength="2" placeholder="00" autocomplete="off">' +
+      '<button class="bt mini" id="bver">Ver</button>' +
+    '</div>' +
+    '<div class="chico">O apunte la cámara al código pegado en el stand.</div></div>';
+}
+
+function htmlEnviar() {
+  var faltan = TOTAL - G.votos.length;
+  if (faltan <= 0) return '<button class="env full" id="benv">Enviar mis ' + TOTAL + ' votos</button>';
+  return '<button class="env off" disabled>Enviar mis votos<small>' +
+    (G.votos.length === 0
+      ? 'se mandan los seis juntos, no de uno en uno'
+      : 'le ' + (faltan === 1 ? 'falta 1' : 'faltan ' + faltan) + ' por escoger') +
+    '</small></button>';
+}
+
+function pinta() {
+  var c = document.getElementById('cuerpo');
+  var pie = document.getElementById('pie');
+  var h = '';
+
+  if (VISTA.que === 'papeleta') {
+    h = '<div class="aviso rojo"><b>Primero su papeleta</b>' +
+        'Escanee el código que le dieron en la entrada, o escriba aquí los cinco caracteres.</div>' +
+        '<div class="campo"><label>CÓDIGO DE LA PAPELETA</label>' +
+        '<input class="inp" id="cpap" type="text" maxlength="5" placeholder="_____" ' +
+        'autocomplete="off" autocapitalize="characters" spellcheck="false"></div>' +
+        '<button class="bt" id="bpap">Continuar</button>' +
+        (VISTA.error ? '<div class="aviso rojo" style="margin-top:12px"><b>' +
+            esc(VISTA.error) + '</b></div>' : '') +
+        '<div class="chico">Sin papeleta no se puede votar. Si la perdió, pida otra en la entrada.</div>';
+
+  } else if (VISTA.que === 'confirma') {
+    var n = VISTA.stand, g = gradoDe(n), nom = nombreDe(n);
+    h = '<div class="stand"><div class="snum">' + n + '</div><div class="sinf">' +
+        '<b>' + esc(nom || ('Stand ' + n)) + '</b><span>' + esc(grupoDe(n)) + '</span>' +
+        '</div></div>' +
+        '<div class="preg">¿Le aparta uno de sus dos votos de ' + g + '?</div>' +
+        '<button class="bt" id="bsi">Sí, apartarlo</button>' +
+        '<button class="bt sec" id="bno">No, era otro</button>' +
+        '<div class="chico">Todavía no se envía nada. Puede cambiarlo después.</div>' +
+        (nom ? '' : '<div class="chico">No se alcanzó a cargar el nombre del equipo. ' +
+          'El número sí es correcto.</div>');
+
+  } else if (VISTA.que === 'lleno') {
+    var n2 = VISTA.stand, g2 = gradoDe(n2), ya = deGrado(g2);
+    var libres = GRADOS.filter(function (g) { return deGrado(g).length < CFG.POR_GRADO; });
+    h = '<div class="stand gris"><div class="snum">' + n2 + '</div><div class="sinf">' +
+        '<b>' + esc(nombreDe(n2) || ('Stand ' + n2)) + '</b><span>' + esc(grupoDe(n2)) +
+        '</span></div></div>' +
+        '<div class="aviso ambar"><b>Sus dos votos de ' + g2 + ' ya están apartados</b>' +
+        'Fueron para el <b style="display:inline">' + ya[0] + '</b> y el ' +
+        '<b style="display:inline">' + ya[1] + '</b>. Si prefiere éste, quite uno de abajo ' +
+        'con la × y vuelva a escribir el ' + n2 + '.</div>' +
+        htmlSlots(true) +
+        htmlTeclear(libres.length
+          ? 'TODAVÍA LE QUEDAN VOTOS DE ' + libres.join(' Y ')
+          : '¿CUÁL STAND LE GUSTÓ?');
+
+  } else if (VISTA.que === 'repetido') {
+    var n3 = VISTA.stand;
+    h = '<div class="stand gris"><div class="snum">' + n3 + '</div><div class="sinf">' +
+        '<b>' + esc(nombreDe(n3) || ('Stand ' + n3)) + '</b><span>' + esc(grupoDe(n3)) +
+        '</span></div></div>' +
+        '<div class="aviso ambar"><b>Ya apartó este equipo</b>' +
+        'Su voto cuenta una vez. Volver a escanearlo no suma.</div>' +
+        htmlSlots(true) + htmlTeclear();
+
+  } else if (VISTA.que === 'nohay') {
+    h = '<div class="aviso rojo"><b>No hay ningún stand ' + esc(VISTA.stand) + '</b>' +
+        'Los stands van del 1 al ' + tope() + '. Revise el número del letrero.</div>' +
+        htmlSlots(true) + htmlTeclear() + htmlEnviar();
+
+  } else if (VISTA.que === 'enviando') {
+    h = '<div class="aviso verde"><b>Mandando sus votos</b>No cierre la página.</div>' +
+        htmlSlots(false) +
+        '<button class="env wait" disabled>Enviando&hellip;</button>';
+
+  } else if (VISTA.que === 'sinsenal') {
+    h = '<div class="aviso ambar"><b>No se pudieron enviar todavía</b>' +
+        'Sus ' + TOTAL + ' votos <b style="display:inline">no se perdieron</b>: están guardados ' +
+        'en este teléfono. Acérquese a la entrada, donde hay señal, y vuelva a darle enviar.</div>' +
+        '<div class="rot">GUARDADOS EN ESTE TELÉFONO</div>' +
+        htmlSlots(false) +
+        '<button class="env full" id="benv">Volver a enviar</button>' +
+        '<div class="chico">Puede cerrar la página: al volver a abrirla siguen ahí.</div>';
+
+  } else if (VISTA.que === 'rechazado') {
+    h = '<div class="aviso rojo"><b>' + esc(VISTA.error) + '</b></div>' +
+        '<div class="rot">LO QUE HABÍA APARTADO</div>' + htmlSlots(false) +
+        '<button class="bt sec" id="botra">Usar otra papeleta</button>';
+
+  } else if (VISTA.que === 'enviado') {
+    h = '<div class="aviso verde grande"><b>Gracias, ya votó</b>' +
+        'Sus ' + TOTAL + ' votos llegaron completos.</div>' +
+        '<div class="rot">LO QUE ESCOGIÓ</div>' + htmlSlots(false) +
+        '<div class="chico">Los resultados se anuncian al cierre de la exposición.</div>' +
+        '<button class="bt sec" style="margin-top:16px" id="botra">Votar con otra papeleta</button>';
+
+  } else { /* home */
+    var recien = VISTA.error;  /* aquí se reusa para el aviso de recién apartado */
+    h = (recien ? '<div class="aviso verde"><b>' + esc(recien) + '</b></div>' : '') +
+        (G.votos.length === 0
+          ? '<div class="regla"><b>Son seis votos: dos de 1°, dos de 2° y dos de 3°.</b>' +
+            'Se mandan completos, así que dése una vuelta por los tres grados antes de enviarlos.</div>'
+          : '') +
+        (completo()
+          ? '<div class="aviso verde"><b>Ya escogió sus seis</b>Revíselos y mándelos. ' +
+            'Después de enviar ya no se pueden cambiar.</div>'
+          : htmlTeclear(G.votos.length ? '¿CUÁL SIGUE?' : '¿CUÁL STAND LE GUSTÓ?')) +
+        '<div class="rot">SUS ' + TOTAL + ' VOTOS' +
+          (G.votos.length ? ' · ' + G.votos.length + ' APARTADOS' : '') + '</div>' +
+        htmlSlots(true) + htmlEnviar();
+  }
+
+  c.innerHTML = h;
+  pie.innerHTML = G.papeleta
+    ? 'Papeleta GV-' + esc(G.papeleta) + ' · su voto es anónimo'
+    : 'Su voto es anónimo';
+  conecta();
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   Botones
+   ═══════════════════════════════════════════════════════════════════ */
+function $(id) { return document.getElementById(id); }
+function al(id, f) { var e = $(id); if (e) e.addEventListener('click', f); }
+
+function conecta() {
+  al('bver', function () {
+    var v = ($('nst') || {}).value || '';
+    mira(parseInt(String(v).replace(/[^0-9]/g, ''), 10));
+  });
+  var nst = $('nst');
+  if (nst) nst.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') { e.preventDefault(); ($('bver') || {}).click && $('bver').click(); }
+  });
+
+  al('bpap', function () {
+    var v = String((($('cpap') || {}).value || '')).toUpperCase().replace(/[^0-9A-Z]/g, '');
+    registraPapeleta(v);
+  });
+
+  al('bsi', function () { aparta(VISTA.stand); });
+  al('bno', function () { ve('home'); });
+  al('benv', enviaVotos);
+  al('botra', otraPapeleta);
+
+  Array.prototype.forEach.call(document.querySelectorAll('[data-quita]'), function (b) {
+    b.addEventListener('click', function () {
+      var n = +b.getAttribute('data-quita');
+      G.votos = G.votos.filter(function (x) { return x !== n; });
+      guarda();
+      ve('home');
+    });
+  });
+}
+
+/* mirar un stand: viene del número escrito o del código escaneado */
+function mira(n) {
+  if (!n || isNaN(n)) return;
+  if (!G.papeleta) { PENDIENTE = n; ve('papeleta'); return; }
+  if (G.enviado)   { ve('enviado'); return; }
+  if (!gradoDe(n)) { ve('nohay', { stand: n }); return; }
+  if (G.votos.indexOf(n) >= 0) { ve('repetido', { stand: n }); return; }
+  if (deGrado(gradoDe(n)).length >= CFG.POR_GRADO) { ve('lleno', { stand: n }); return; }
+  ve('confirma', { stand: n });
+}
+
+function aparta(n) {
+  if (!n || G.votos.indexOf(n) >= 0) { ve('home'); return; }
+  if (deGrado(gradoDe(n)).length >= CFG.POR_GRADO) { ve('lleno', { stand: n }); return; }
+  G.votos.push(n);
+  guarda();
+  ve('home', { error: 'Apartado el stand ' + n + (nombreDe(n) ? ' · ' + nombreDe(n) : '') });
+}
+
+var PENDIENTE = 0;
+
+function registraPapeleta(cod) {
+  if (!cod || cod.length < 5) { ve('papeleta', { error: 'Faltan caracteres del código.' }); return; }
+  G.papeleta = cod; guarda();
+  /* si hay señal se valida de una vez; si no, se acepta y se valida al enviar */
+  api({ a: 'papeleta', b: cod, t: G.token, p: CFG.PROYECTO }, function (r) {
+    if (r.ok === false) {
+      G.papeleta = ''; guarda();
+      ve('papeleta', { error: r.error || 'Ese código de papeleta no existe.' });
+      return;
+    }
+    if (r.equipos) { G.equipos = r.equipos; guarda(); }
+    sigue();
+  }, function () { sigue(); });
+
+  function sigue() {
+    if (!G.equipos) traeEquipos(abre); else abre();
+  }
+  function abre() {
+    if (PENDIENTE) { var n = PENDIENTE; PENDIENTE = 0; mira(n); }
+    else ve('home');
+  }
+}
+
+function enviaVotos() {
+  if (!completo()) { ve('home'); return; }
+  ve('enviando');
+  api({
+    a: 'votar', b: G.papeleta, t: G.token, p: CFG.PROYECTO,
+    v: G.votos.slice().sort(function (a, b) { return a - b; }).join('-')
+  }, function (r) {
+    if (r.ok) { G.enviado = true; guarda(); ve('enviado'); return; }
+    ve('rechazado', { error: r.error || 'No se pudo registrar su papeleta.' });
+  }, function (e) {
+    ve(e === 'sinconfig' ? 'rechazado' : 'sinsenal',
+       { error: 'Falta configurar la liga del buzón.' });
+  });
+}
+
+function otraPapeleta() {
+  G.papeleta = ''; G.votos = []; G.enviado = false;
+  G.token = nuevoToken();
+  guarda();
+  ve('papeleta');
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   Arranque
+   ═══════════════════════════════════════════════════════════════════ */
+(function () {
+  lee();
+
+  var q = {};
+  (location.search || '').replace(/^\?/, '').split('&').forEach(function (p) {
+    if (!p) return;
+    var i = p.indexOf('=');
+    q[decodeURIComponent(i < 0 ? p : p.slice(0, i))] =
+      decodeURIComponent(i < 0 ? '' : p.slice(i + 1));
+  });
+  /* la liga se limpia para que al recargar no se repita la acción */
+  if (location.search) {
+    try { history.replaceState(null, '', location.pathname); } catch (x) {}
+  }
+
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register('./sw.js').catch(function () {});
+    });
+  }
+
+  var s = parseInt(String(q.s || '').replace(/[^0-9]/g, ''), 10);
+  var b = String(q.b || '').toUpperCase().replace(/[^0-9A-Z]/g, '');
+
+  if (b && !G.enviado) { if (s) PENDIENTE = s; registraPapeleta(b); return; }
+  if (G.enviado) { ve('enviado'); return; }
+  if (!G.papeleta) { if (s) PENDIENTE = s; ve('papeleta'); return; }
+  if (!G.equipos) traeEquipos(function () { s ? mira(s) : ve('home'); });
+  else if (s) mira(s);
+  else ve('home');
+})();
+</script>
+</body>
+</html>

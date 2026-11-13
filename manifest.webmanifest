@@ -1,0 +1,10 @@
+{
+  "name": "Generación Verde · Votación",
+  "short_name": "Votación GV",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#990000",
+  "theme_color": "#990000",
+  "lang": "es-MX"
+}
